@@ -4,6 +4,7 @@ export default function Upload() {
 
     const [image,setImage] = useState("");
     const [error,setError] = useState("");
+    const [message,setMessage] = useState("");
 
     const uploadImage = e => {
         setImage(e.target.files[0]);
@@ -12,6 +13,11 @@ export default function Upload() {
     const handleSubmit = e => {
         e.preventDefault();
 
+        // reset the error
+        setError("");
+        // reset the message
+        setMessage("");
+
         // compose the form data
         let form_data = new FormData();
         // add the image to the form data
@@ -19,14 +25,13 @@ export default function Upload() {
         // submit...
 
         try{
-            fetch({
-                url:"<your-api-url>",
-                method:"post",
+            fetch("http://159.203.7.235:8000/api/upload_image_test/",{
+                method:"POST",
                 body:form_data
             })
             .then(res => {
                 res.json().then(result => {
-                    console.log("result",result);
+                    return setMessage(result.message);
                 })
             })
         }catch(error){
@@ -40,6 +45,11 @@ export default function Upload() {
             {
                 error ? (
                     <p style={{color:"red"}}>{error}</p>
+                ) : null
+            }
+            {
+                message ? (
+                    <p style={{color:"green"}}>{message}</p>
                 ) : null
             }
             <input type="file" id="image" name="image" onChange={uploadImage} multiple={false} required={true}/>
